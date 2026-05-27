@@ -37,7 +37,7 @@ Available commands:
   welcome    - Show the welcome message again
   matrix     - Mini matrix effect
   uptime     - System uptime
-  contact    - Share your name and number
+  contact    - Send your contact details
   snake      - Play a simple terminal snake
   meaning.of.life.exe - Choose your destiny
   slideshow.exe - Family photos slideshow
@@ -292,7 +292,7 @@ function startContactFlow() {
 
     // Header and intro with a bit of flair
     addOutput('┌──────────────── CONTACT ────────────────┐', 'welcome-divider');
-    addOutput('Let\'s get you in touch. I\'ll ask two quick things.', 'welcome-text');
+    addOutput('Let\'s get you in touch. I\'ll ask three quick things.', 'welcome-text');
     addOutput('Press Enter after each answer.', 'info-text');
     addOutput('└─────────────────────────────────────────┘', 'welcome-divider');
 
@@ -325,29 +325,45 @@ function handleContactInput(value, input, updateCursorPositionFn) {
         }
         contactSession.data.name = name;
         addOutput(`Nice to meet you, ${name}!`, 'info-text');
-        addOutput('Your phone number? (include country code if outside your region)', 'question-text');
-        contactSession.step = 'phone';
+        addOutput('Best email or phone number?', 'question-text');
+        contactSession.step = 'contact';
         // Clear input and keep cursor updated
         input.value = '';
         updateCursorPositionFn();
         return;
     }
 
-    if (contactSession.step === 'phone') {
-        const phone = (value || '').trim();
-        const digits = phone.replace(/\D/g, '');
-        if (!phone || digits.length < 7 || digits.length > 20) {
-            addOutput('Please enter a valid phone number (e.g., +1 555-123-4567).', 'error-text');
+    if (contactSession.step === 'contact') {
+        const contact = (value || '').trim();
+        const digits = contact.replace(/\D/g, '');
+        const looksLikeEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact);
+        const looksLikePhone = digits.length >= 7 && digits.length <= 20;
+        if (!contact || (!looksLikeEmail && !looksLikePhone)) {
+            addOutput('Please enter a valid email address or phone number.', 'error-text');
             return; // Ask again
         }
-        contactSession.data.phone = phone;
+        contactSession.data.contact = contact;
+        addOutput('What should I know about your role, project, or opportunity?', 'question-text');
+        contactSession.step = 'details';
+        input.value = '';
+        updateCursorPositionFn();
+        return;
+    }
+
+    if (contactSession.step === 'details') {
+        const details = (value || '').trim();
+        if (!details || details.length < 8) {
+            addOutput('Please share a short note with at least a few words.', 'error-text');
+            return;
+        }
+        contactSession.data.details = details;
         finalizeContact(input, updateCursorPositionFn);
         return;
     }
 }
 
 function finalizeContact(input, updateCursorPositionFn) {
-    const { name, phone } = contactSession.data;
+    const { name, contact, details } = contactSession.data;
 
     // Simulate sending with an animated status line
     const statusEl = appendLine('Sending', 'info-text');
@@ -362,19 +378,23 @@ function finalizeContact(input, updateCursorPositionFn) {
     try {
         const key = 'terminalContacts';
         const list = JSON.parse(localStorage.getItem(key) || '[]');
-        list.push({ name, phone, timestamp: nowIso });
+        list.push({ name, contact, details, timestamp: nowIso });
         localStorage.setItem(key, JSON.stringify(list));
     } catch (e) {
         // Ignore storage errors (private mode, etc.)
     }
 
-    // After a short delay, finish
-    setTimeout(() => {
+    const summary =
+        `New contact request\n` +
+        `Name: ${name}\n` +
+        `Contact: ${contact}\n` +
+        `Details: ${details}\n` +
+        `Received: ${nowIso}`;
+
+    submitContactRequest({ name, contact, details, submittedAt: nowIso }).then((result) => {
         clearInterval(spinner);
         statusEl.textContent = 'Sent ✓';
         statusEl.className = 'output-line success-text';
-
-        const summary = `New contact request\nName: ${name}\nPhone: ${phone}\nReceived: ${nowIso}`;
 
         // Try to copy to clipboard
         if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -385,20 +405,10 @@ function finalizeContact(input, updateCursorPositionFn) {
             });
         }
 
-        // Provide a one-click email composer link
-        const mail = document.createElement('div');
-        mail.className = 'output-line info-text';
-        const a = document.createElement('a');
-        const to = (CONTACT_EMAIL && CONTACT_EMAIL.trim()) ? CONTACT_EMAIL.trim() : '';
-        a.href = 'mailto:' + to + '?subject=' + encodeURIComponent('New contact from CRT Terminal') +
-                 '&body=' + encodeURIComponent(summary);
-        a.textContent = 'Open email composer with details';
-        a.style.color = '#66ccff';
-        a.rel = 'noopener noreferrer';
-        mail.appendChild(a);
-        appendNode(mail);
-
         addOutput(`Thanks, ${name}! I’ll get back to you soon.`, 'success-text');
+        if (result?.id) {
+            addOutput(`Reference ID: ${result.id}`, 'muted-text');
+        }
         addOutput('Tip: run "help" or explore more commands.', 'muted-text');
 
         // Clear input box and exit interactive mode
@@ -406,7 +416,53 @@ function finalizeContact(input, updateCursorPositionFn) {
         updateCursorPositionFn();
         contactSession = null;
         window.terminalState?.setInteractiveHandler(null);
-    }, 1500);
+    }).catch((error) => {
+        clearInterval(spinner);
+        statusEl.textContent = 'Send failed';
+        statusEl.className = 'output-line error-text';
+
+        addOutput(error?.message || 'Unable to submit your request right now.', 'error-text');
+        addOutput('You can still use the fallback email link below.', 'info-text');
+
+        const mail = document.createElement('div');
+        mail.className = 'output-line info-text';
+        const a = document.createElement('a');
+        const to = (CONTACT_EMAIL && CONTACT_EMAIL.trim()) ? CONTACT_EMAIL.trim() : '';
+        a.href =
+            'mailto:' +
+            to +
+            '?subject=' +
+            encodeURIComponent('New contact from CRT Terminal') +
+            '&body=' +
+            encodeURIComponent(summary);
+        a.textContent = 'Open email composer with details';
+        a.style.color = '#66ccff';
+        a.rel = 'noopener noreferrer';
+        mail.appendChild(a);
+        appendNode(mail);
+
+        input.value = '';
+        updateCursorPositionFn();
+        contactSession = null;
+        window.terminalState?.setInteractiveHandler(null);
+    });
+}
+
+async function submitContactRequest(payload) {
+    const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(result.error || 'Unable to submit your request right now.');
+    }
+
+    return result;
 }
 
 // ===========================

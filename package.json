@@ -1,0 +1,8 @@
+{
+    "name": "fake-crt-ravon-dev",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@supabase/supabase-js": "2.106.2"
+    }
+}

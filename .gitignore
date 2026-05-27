@@ -16,3 +16,7 @@ Thumbs.db
 # Future env/config files
 .env
 .env.*
+!.env.example
+
+# Node dependencies for Vercel Functions
+node_modules/

@@ -56,13 +56,28 @@ Huge thanks to them for sharing these resources, they saved me a lot of time and
 
 ## Deployment & Security (No Secrets in Repo)
 
-- This is a static site. There are no API keys required to run it.
+- This site is mostly static, with Vercel serverless functions for lead intake.
 - Do not hardcode credentials or tokens anywhere in `js/` or `index.html`.
 - If you ever add backend calls, keep secrets in your platform env (e.g., Vercel Project Settings → Environment Variables) and never commit them.
 - Local-only artifacts are ignored via `.gitignore` and excluded from deployments via `.vercelignore` (e.g., `.server/`, `server.pid`, `*.log`, and `img/family/`).
-- Contact email lives in `js/config.js` as `CONTACT_EMAIL`. It’s public by design; change or remove it if you prefer not to expose an address.
+- Contact email lives in `js/config.js` as `CONTACT_EMAIL`. It remains public only as a fallback contact path.
+
+## Contact Intake (Vercel + Supabase)
+
+- The `contact` terminal command now posts to `/api/inquiries`.
+- The Vercel function stores submissions in Supabase using a service-role key that must live only in Vercel environment variables.
+- Required Vercel environment variables:
+  - `SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `SUPABASE_INQUIRIES_TABLE` (optional, defaults to `crt_contact_requests`)
+
+### Supabase setup
+
+Run the SQL in `supabase/crt_contact_requests.sql`.
+
+That creates the intake table and locks it down so only the service-role key can write to it.
 
 ### Verify env on Vercel
 
 - A serverless health check is available at `/api/health`.
-- It returns JSON `{ ok: true, configured: <boolean> }` without revealing the key.
+- It returns JSON `{ ok: true, configured: <boolean>, table: <string> }` without revealing secrets.
