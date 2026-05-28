@@ -70,6 +70,17 @@ Huge thanks to them for sharing these resources, they saved me a lot of time and
   - `SUPABASE_URL`
   - `SUPABASE_SERVICE_ROLE_KEY`
   - `SUPABASE_INQUIRIES_TABLE` (optional, defaults to `crt_contact_requests`)
+- Optional Vercel environment variables for notification email:
+  - `RESEND_API_KEY`
+  - `CONTACT_NOTIFICATION_FROM`
+  - `CONTACT_NOTIFICATION_TO` (optional, defaults to `rg@ravon.dev`)
+
+### Contact email notifications
+
+- The serverless handler can send a notification email after a successful Supabase insert.
+- It uses Resend from the Vercel server side, so the API key stays private and never reaches the browser.
+- If email sending fails, the submission is still kept in Supabase. The database write remains the source of truth.
+- `CONTACT_NOTIFICATION_FROM` must use a sender on a domain you have verified with Resend, such as `contact@ravon.dev`.
 
 ### Supabase setup
 
@@ -80,4 +91,4 @@ That creates the intake table and locks it down so only the service-role key can
 ### Verify env on Vercel
 
 - A serverless health check is available at `/api/health`.
-- It returns JSON `{ ok: true, configured: <boolean>, table: <string> }` without revealing secrets.
+- It returns JSON `{ ok: true, configured: <boolean>, table: <string>, notificationConfigured: <boolean> }` without revealing secrets.
