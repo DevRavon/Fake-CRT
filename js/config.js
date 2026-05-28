@@ -48,10 +48,10 @@ export const welcomeTemplate = `
 ${asciiArt}
 </pre>
 <div class="output-line welcome-text">Welcome to my website!</div>
-<div class="output-line info-text">Type 'contact' to get in touch, and 'help' for more commands to try.</div>
+<div class="output-line info-text">Type 'contact' to send your info, and 'help' for more commands to try.</div>
 <div class="output-line welcome-divider">══════════════════════════════════════</div>
 `;
 
-// Optional: set this to your email to prefill the composer in `contact` flow
+// Optional fallback contact email for the `contact` flow if the backend submit fails
 // Example: export const CONTACT_EMAIL = 'you@example.com';
 export const CONTACT_EMAIL = 'admin@ravon.dev';
