@@ -2,6 +2,8 @@
 
 Ravon's personal website offers two ways to explore: an Ubuntu-inspired desktop and an interactive terminal. Both lead to the same projects, toolkit, games, and contact form.
 
+Visitors choose Desktop or Terminal at entry and can switch later. The desktop has draggable application windows, an app launcher, Files, games, and a windowed Terminal. Files and Terminal share folder paths and a local `notes.txt`; the editor saves notes only in the visitor's browser. Try `help`, `ls`, `cd projects`, `cat ravon.dev.txt`, `neofetch`, `nano /notes.txt`, and `open /pictures/matrix.svg` in Terminal.
+
 The frontend uses plain HTML, CSS, and JavaScript. Vercel serves the static site and the contact function in `api/contact.js`.
 
 ## Run locally
@@ -37,4 +39,4 @@ Review desktop, terminal, contact, and games in a browser at desktop and phone w
 
 ## Credits
 
-The original CRT terminal was created with contributions from [davislcruz](https://github.com/davislcruz). This redesign retains the terminal idea while making the site easier to browse and contact Ravon.
+The original CRT terminal was created with contributions from [davislcruz](https://github.com/davislcruz). The desktop interaction was informed by the [Awesome Web Desktops](https://github.com/syxanash/awesome-web-desktops) collection, especially its portfolio and file manager examples. This redesign retains the terminal idea while making the site easier to browse and contact Ravon.
