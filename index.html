@@ -1,27 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retro CRT Terminal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&family=VT323&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/main.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#231929">
+  <meta name="description" content="Explore Ravon Gordon's projects and get in touch. Choose a desktop or terminal experience.">
+  <meta property="og:title" content="Ravon Gordon — Builder & Technologist">
+  <meta property="og:description" content="Useful tools, thoughtful systems, and a little curiosity. Explore in desktop or terminal mode.">
+  <meta property="og:type" content="website">
+  <title>Ravon Gordon — Builder & Technologist</title>
+  <link rel="icon" href="img/ravon-dev.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/site.css">
+  <script type="module" src="js/site.js"></script>
 </head>
 <body>
-    <div class="crt-screen crt-scanlines crt-flicker">
-        <div class="terminal crt-colorsep" id="terminal">
-            <div class="terminal-output" id="output"></div>
-            <div class="input-line">
-                <span class="prompt">guest@terminal:~$</span>
-                <span class="input-display" id="input-display"></span>
-                <span class="cursor" id="cursor"></span>
-            </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <main id="main">
+    <section class="chooser" id="chooser" aria-labelledby="chooser-title">
+      <div class="chooser-shell">
+        <div class="chooser-top"><span class="brand-mark">R<span>.</span></span><span class="chooser-kicker">RAVON.DEV <span class="status-dot"></span> ONLINE</span></div>
+        <div class="chooser-intro">
+          <p class="eyebrow">WELCOME TO MY CORNER OF THE INTERNET</p>
+          <h1 id="chooser-title">A different way<br>to <em>connect.</em></h1>
+          <p>I'm Ravon. I build useful tools, explore how systems work, and make ideas real. Pick the way you'd like to look around.</p>
         </div>
-        <div class="overlay">TERM-1</div>
-        <textarea id="input" class="terminal-input" autofocus autocomplete="off" spellcheck="false"></textarea>
-    </div>
-    <script type="module" src="js/main.js"></script>
+        <div class="mode-grid">
+          <button class="mode-card desktop-card" data-mode="desktop" aria-label="Enter desktop mode">
+            <span class="mode-card-top"><span class="mode-number">01 / VISUAL</span><span class="arrow-icon">↗</span></span>
+            <span class="desktop-preview" aria-hidden="true"><span class="preview-bar"><i></i><i></i><i></i></span><span class="preview-side"><b>▦</b><b>▤</b><b>⌘</b></span><span class="preview-panel"><span class="preview-panel-title">Hello, I'm Ravon.</span><span class="preview-lines"></span><span class="preview-mini">Explore projects →</span></span></span>
+            <span class="mode-card-bottom"><span><strong>Desktop</strong><small>Browse the workspace, open apps, and explore.</small></span><span class="mode-action">Launch desktop <span>→</span></span></span>
+          </button>
+          <button class="mode-card terminal-card" data-mode="terminal" aria-label="Enter terminal mode">
+            <span class="mode-card-top"><span class="mode-number">02 / COMMAND LINE</span><span class="arrow-icon">↗</span></span>
+            <span class="terminal-preview" aria-hidden="true"><span class="terminal-preview-head"><span>● ● ●</span><span>ravon@dev:~</span></span><span class="term-preview-body"><span><b>ravon@dev</b>:~$ whoami</span><span>Ravon Gordon</span><span><b>ravon@dev</b>:~$ ls</span><span class="preview-accent">about/ projects/ contact/ games/</span><span><b>ravon@dev</b>:~$ <i>▋</i></span></span></span>
+            <span class="mode-card-bottom"><span><strong>Terminal</strong><small>Type commands and follow your curiosity.</small></span><span class="mode-action">Open terminal <span>→</span></span></span>
+          </button>
+        </div>
+        <div class="chooser-footer"><span>BUILT WITH CURIOSITY · JAVASCRIPT · 2026</span><a href="mailto:admin@ravon.dev">NEED TO REACH ME DIRECTLY? <span>↗</span></a></div>
+      </div>
+    </section>
+    <section class="workspace hidden" id="workspace" aria-label="Ravon's workspace">
+      <div class="topbar"><button class="topbar-brand" id="topbar-home" aria-label="Return to mode chooser"><span class="brand-mark">R<span>.</span></span><span>ravon.dev</span></button><span class="topbar-center" id="workspace-label">Workspace</span><div class="topbar-right"><button id="mode-switch" class="topbar-mode">Switch mode <span>⌘</span></button><time id="clock"></time></div></div>
+      <div class="desktop-view hidden" id="desktop-view">
+        <div class="desktop-wallpaper"><div class="wallpaper-orb orb-one"></div><div class="wallpaper-orb orb-two"></div><div class="wallpaper-content"><span class="wallpaper-tag"><span class="status-dot"></span> OPEN TO CONVERSATIONS</span><h2>Build something<br><em>meaningful.</em></h2><p>Welcome to Ravon's workspace. Start with a folder, or jump straight to a conversation.</p><button class="wallpaper-cta" data-open="contact">Let's talk <span>↗</span></button></div><span class="wallpaper-signature">RG / 2026</span></div>
+        <nav class="dock" aria-label="Applications"><button data-open="about" title="About" aria-label="Open About"><span>◈</span><small>About</small></button><button data-open="projects" title="Projects" aria-label="Open Projects"><span>▦</span><small>Projects</small></button><button data-open="skills" title="Toolkit" aria-label="Open Toolkit"><span>⌘</span><small>Toolkit</small></button><button data-open="games" title="Games" aria-label="Open Games"><span>✳</span><small>Games</small></button><button data-open="contact" class="dock-contact" title="Contact" aria-label="Open Contact"><span>✉</span><small>Contact</small></button><span class="dock-divider"></span><button id="dock-terminal" title="Terminal" aria-label="Switch to terminal"><span class="dock-terminal-icon">&gt;_</span><small>Terminal</small></button></nav>
+        <div class="desktop-icons" aria-label="Desktop shortcuts"><button data-open="projects"><span class="folder-icon">▤</span><span>Projects</span></button><button data-open="about"><span class="folder-icon">▤</span><span>About me</span></button><button data-open="contact"><span class="folder-icon special">✉</span><span>Say hello</span></button></div>
+      </div>
+      <div class="terminal-view hidden" id="terminal-view"><div class="terminal-shell"><div class="terminal-titlebar"><div class="window-dots"><span></span><span></span><span></span></div><span>ravon@dev: ~</span><button id="terminal-desktop" title="Switch to desktop">Open desktop ↗</button></div><div class="terminal-body" id="terminal-body" role="log" aria-live="polite" aria-label="Terminal output"></div><form id="terminal-form" class="terminal-input-row" autocomplete="off"><label for="terminal-input" id="terminal-prompt">ravon@dev:~$</label><input id="terminal-input" aria-label="Terminal command" spellcheck="false" autocapitalize="off" autocomplete="off"><button type="submit" aria-label="Run command">↵</button></form></div><div class="terminal-aside"><span>INTERACTIVE PORTFOLIO / V1.0</span><span>TYPE <b>HELP</b> TO BEGIN</span></div></div>
+      <div id="window-layer" class="window-layer" aria-live="off"></div>
+      <div class="taskbar" id="taskbar" aria-label="Open windows"></div>
+    </section>
+  </main>
 </body>
 </html>
