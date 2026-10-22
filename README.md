@@ -2,7 +2,7 @@
 
 Ravon's personal website offers two ways to explore: an Ubuntu-inspired desktop and an interactive terminal. Both lead to the same projects, toolkit, games, and contact form.
 
-Visitors choose Desktop or Terminal at entry and can switch later. The desktop has draggable application windows, an app launcher, Files, games, and a windowed Terminal. Files and Terminal share folder paths and a local `notes.txt`; the editor saves notes only in the visitor's browser. Try `help`, `ls`, `cd projects`, `cat ravon.dev.txt`, `neofetch`, `nano /notes.txt`, and `open /pictures/matrix.svg` in Terminal.
+Visitors choose Desktop or Terminal at entry and can switch later. Desktop opens to a clean workspace with draggable application windows, an app launcher, Files, games, a context menu, and a windowed Terminal. The selected Terminal mode fills the viewport. Both use the original Ravon.dev logo. Files and Terminal share folder paths and a local `notes.txt`; the editor saves notes only in the visitor's browser. Try `help`, `ls`, `cd projects`, `cat ravon.dev.txt`, `neofetch`, `nano /notes.txt`, and `open /pictures/matrix.svg` in Terminal.
 
 The frontend uses plain HTML, CSS, and JavaScript. Vercel serves the static site and the contact function in `api/contact.js`.
 
