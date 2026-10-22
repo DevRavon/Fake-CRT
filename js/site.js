@@ -10,6 +10,7 @@ const terminalBody = $('#terminal-body');
 const terminalInput = $('#terminal-input');
 const terminalShell = $('.terminal-shell');
 const launcher = $('#app-launcher');
+const desktopContext = $('#desktop-context');
 let mode = null;
 let zIndex = 30;
 let activeWindow = null;
@@ -22,13 +23,13 @@ const titles = {files:'Files',about:'About Ravon',projects:'Projects',skills:'To
 const icons = {files:'▤',about:'◈',projects:'▦',skills:'⌘',games:'✳',contact:'✉',terminal:'>_'};
 
 const pages = {
-  files: `<div class="files-app"><aside class="files-sidebar"><span class="section-label">PLACES</span><button data-path="/">⌂ <span>Home</span></button><button data-path="/about">◈ <span>About</span></button><button data-path="/projects">▦ <span>Projects</span></button><button data-path="/games">✳ <span>Games</span></button><button data-path="/contact">✉ <span>Contact</span></button></aside><div class="files-main"><div class="files-toolbar"><button class="files-back" aria-label="Back">←</button><button class="files-up" aria-label="Up one folder">↑</button><div class="files-path" aria-label="Current folder"></div></div><div class="files-list" aria-live="polite"></div><div class="files-preview hidden"></div></div></div>`,
+  files: `<div class="files-app"><aside class="files-sidebar"><span class="section-label">PLACES</span><button data-path="/">⌂ <span>Home</span></button><button data-path="/about">◈ <span>About</span></button><button data-path="/projects">▦ <span>Projects</span></button><button data-path="/games">✳ <span>Games</span></button><button data-path="/contact">✉ <span>Contact</span></button></aside><div class="files-main"><div class="files-toolbar"><button class="files-back" aria-label="Back">←</button><button class="files-up" aria-label="Up one folder">↑</button><div class="files-path" aria-label="Current folder"></div></div><div class="files-list" aria-live="polite"></div><div class="files-preview hidden"></div><div class="files-status" aria-live="polite"></div></div></div>`,
   terminal: '',
-  about: `<span class="section-label">01 / ABOUT</span><h2>Hey, I'm Ravon.</h2><p class="intro-lead">I like turning a complicated problem into a useful, approachable tool.</p><p>My interests meet at the intersection of practical software, Linux, networking, and automation. I experiment in a homelab, build with JavaScript, and enjoy finding better ways for people to work with technology.</p><hr class="content-rule"><h3>What you'll find here</h3><div class="feature-grid"><button class="feature-tile" data-open="projects"><span class="tile-icon">▦</span><strong>Selected projects</strong><small>Things I'm building and learning from.</small></button><button class="feature-tile" data-open="skills"><span class="tile-icon">⌘</span><strong>My toolkit</strong><small>The tools and systems I work with.</small></button></div><hr class="content-rule"><a class="text-link" href="https://github.com/DevRavon" target="_blank" rel="noopener noreferrer">View GitHub ↗</a> &nbsp; <button class="text-link" data-open="contact" style="border:0;background:none;cursor:pointer">Start a conversation ↗</button>`,
-  projects: `<span class="section-label">02 / WORK & EXPERIMENTS</span><h2>Projects with a purpose.</h2><p>Some work is about making a daily process easier. Some is about learning how the pieces fit together. Here's a little of both.</p><div class="project-grid"><article class="project-card"><span class="project-index">01 / WEB</span><strong>Ravon.dev</strong><p>A personal site with two ways in: a visual desktop and a command line. Built in plain JavaScript.</p><small><a href="https://github.com/DevRavon/Fake-CRT" target="_blank" rel="noopener noreferrer">Explore source ↗</a></small></article><article class="project-card"><span class="project-index">02 / SYSTEMS</span><strong>Home lab</strong><p>Hands-on experiments with virtual machines, containers, Linux, private networking, and self-hosted services.</p><small>Proxmox · Docker · Tailscale</small></article><article class="project-card"><span class="project-index">03 / AUTOMATION</span><strong>Workflow tools</strong><p>Exploring useful ways to connect forms, spreadsheets, and operational information to reduce repetitive work.</p><small>Power Platform · JavaScript</small></article><article class="project-card"><span class="project-index">04 / YOUR IDEA</span><strong>Let's build something</strong><p>Have a problem worth solving or a project to discuss? I'd like to hear about it.</p><small><button class="text-link" data-open="contact" style="border:0;background:none;padding:0;cursor:pointer">Get in touch ↗</button></small></article></div>`,
-  skills: `<span class="section-label">03 / TOOLKIT</span><h2>Curious by default.</h2><p>Tools are useful when they help people get something done. These are areas I keep exploring and putting to work.</p><div class="tool-grid"><div class="tool-card"><span class="tile-icon">⌘</span><strong>Web & scripting</strong><small>JavaScript, HTML, CSS, Google Apps Script</small></div><div class="tool-card"><span class="tile-icon">▣</span><strong>Linux & infrastructure</strong><small>Linux administration, Proxmox, Docker, self-hosting</small></div><div class="tool-card"><span class="tile-icon">◇</span><strong>Networking</strong><small>VLANs, Tailscale, troubleshooting, lab environments</small></div><div class="tool-card"><span class="tile-icon">↗</span><strong>Automation</strong><small>Power Apps, Power Automate, spreadsheets, practical workflows</small></div></div><hr class="content-rule"><p>Interested in comparing notes or working on a useful idea?</p><button class="primary-button" data-open="contact">Let's talk <span>↗</span></button>`,
-  games: `<span class="section-label">04 / PLAYGROUND</span><h2>Take a break.</h2><p>A little play belongs in any good workspace. Pick a game below.</p><div class="game-grid"><button class="game-card" data-game="snake"><span class="tile-icon">▦</span><strong>Snake</strong><small>Collect the orange squares. Arrow keys or on-screen controls.</small></button><button class="game-card" data-game="tic"><span class="tile-icon">✳</span><strong>Tic-tac-toe</strong><small>Two players, one screen. Take turns placing X and O.</small></button></div><div id="game-area"></div>`,
-  contact: `<span class="section-label">05 / CONTACT</span><h2>Let's make a connection.</h2><p>Tell me what you're working on, ask a question, or just say hello. Your message comes straight to my inbox.</p><div class="contact-layout"><form class="contact-form" id="contact-form"><div class="field-row"><label>Your name<input name="name" autocomplete="name" maxlength="100" required placeholder="Your name"></label><label>Email address<input type="email" name="email" autocomplete="email" maxlength="254" required placeholder="you@example.com"></label></div><label>Subject<input name="subject" maxlength="150" required placeholder="What would you like to discuss?"></label><label>Message<textarea name="message" maxlength="5000" required placeholder="Tell me a little about it..."></textarea></label><label class="honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label><button type="submit" class="primary-button">Send message <span>↗</span></button><p class="contact-status" role="status" aria-live="polite"></p></form><aside class="contact-aside"><span class="section-label">OTHER WAYS</span><p>Email directly:<br><a class="text-link" href="mailto:admin@ravon.dev">admin@ravon.dev</a></p><p>See what I'm building:<br><a class="text-link" href="https://github.com/DevRavon" target="_blank" rel="noopener noreferrer">GitHub ↗</a></p><p>I read every message. Please don't include passwords or sensitive information.</p></aside></div>`
+  about: `<span class="section-label">ABOUT</span><h2>Ravon Gordon</h2><p class="intro-lead">JavaScript, Linux, networking, and automation.</p><p>I build web tools and maintain a home lab for testing virtual machines, containers, and private networks.</p><hr class="content-rule"><div class="feature-grid"><button class="feature-tile" data-open="projects"><span class="tile-icon">▦</span><strong>Projects</strong><small>Site source and current work</small></button><button class="feature-tile" data-open="skills"><span class="tile-icon">⌘</span><strong>Toolkit</strong><small>Technologies I use</small></button></div><hr class="content-rule"><a class="text-link" href="https://github.com/DevRavon" target="_blank" rel="noopener noreferrer">GitHub ↗</a> &nbsp; <button class="text-link" data-open="contact" style="border:0;background:none;cursor:pointer">Contact ↗</button>`,
+  projects: `<span class="section-label">PROJECTS</span><h2>Work and experiments</h2><div class="project-grid"><article class="project-card"><span class="project-index">WEB</span><strong>Ravon.dev</strong><p>This website: a desktop, terminal, and contact form built with plain JavaScript.</p><small><a href="https://github.com/DevRavon/Fake-CRT" target="_blank" rel="noopener noreferrer">Source code ↗</a></small></article><article class="project-card"><span class="project-index">HOME LAB</span><strong>Systems lab</strong><p>Virtual machines, containers, Linux, and private networking.</p><small>Proxmox · Docker · Tailscale</small></article><article class="project-card"><span class="project-index">AUTOMATION</span><strong>Workflow tools</strong><p>Forms, spreadsheets, and scripts that organize operational information.</p><small>Power Platform · JavaScript</small></article></div>`,
+  skills: `<span class="section-label">TOOLKIT</span><h2>Tools and systems</h2><div class="tool-grid"><div class="tool-card"><span class="tile-icon">⌘</span><strong>Web & scripting</strong><small>JavaScript, HTML, CSS, Google Apps Script</small></div><div class="tool-card"><span class="tile-icon">▣</span><strong>Linux & infrastructure</strong><small>Linux, Proxmox, Docker, self-hosting</small></div><div class="tool-card"><span class="tile-icon">◇</span><strong>Networking</strong><small>VLANs, Tailscale, troubleshooting</small></div><div class="tool-card"><span class="tile-icon">↗</span><strong>Automation</strong><small>Power Apps, Power Automate, spreadsheets</small></div></div>`,
+  games: `<span class="section-label">GAMES</span><h2>Games</h2><div class="game-grid"><button class="game-card" data-game="snake"><span class="tile-icon">▦</span><strong>Snake</strong><small>Arrow keys or on-screen controls</small></button><button class="game-card" data-game="tic"><span class="tile-icon">✳</span><strong>Tic-tac-toe</strong><small>Two players on one screen</small></button></div><div id="game-area"></div>`,
+  contact: `<span class="section-label">CONTACT</span><h2>Send a message</h2><p>The form sends your message to my inbox.</p><div class="contact-layout"><form class="contact-form" id="contact-form"><div class="field-row"><label>Your name<input name="name" autocomplete="name" maxlength="100" required placeholder="Your name"></label><label>Email address<input type="email" name="email" autocomplete="email" maxlength="254" required placeholder="you@example.com"></label></div><label>Subject<input name="subject" maxlength="150" required placeholder="What would you like to discuss?"></label><label>Message<textarea name="message" maxlength="5000" required placeholder="Tell me a little about it..."></textarea></label><label class="honeypot" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label><button type="submit" class="primary-button">Send message <span>↗</span></button><p class="contact-status" role="status" aria-live="polite"></p></form><aside class="contact-aside"><span class="section-label">DIRECT</span><p><a class="text-link" href="mailto:admin@ravon.dev">admin@ravon.dev</a></p><p><a class="text-link" href="https://github.com/DevRavon" target="_blank" rel="noopener noreferrer">GitHub ↗</a></p><p>Please don't include passwords or sensitive information.</p></aside></div>`
 };
 
 function updateClock() { $('#clock').textContent = new Intl.DateTimeFormat(undefined,{weekday:'short',hour:'numeric',minute:'2-digit'}).format(new Date()); }
@@ -38,19 +39,21 @@ setInterval(updateClock, 30000);
 function closeAllWindows() { for (const id of [...windows.keys()]) closeWindow(id); }
 function printWelcome() {
   if (terminalBody.childElementCount) return;
-  printLine(ARCH_LOGO, 'accent-line terminal-logo');
-  printLine("Welcome to ravon.dev. You're in the Terminal. Type help to explore, or desktop to switch views.");
+  const logo = document.createElement('img');
+  logo.src = 'img/ravon-dev.svg'; logo.alt = 'Ravon.dev'; logo.className = 'terminal-brand';
+  terminalBody.append(logo);
+  printLine("Type help for commands, contact to send a message, or desktop to switch views.");
 }
-function chooseMode(next, welcome = false) {
+function chooseMode(next) {
   closeLauncher();
   mode = next;
   chooser.classList.add('hidden');
   workspace.classList.remove('hidden');
+  workspace.classList.toggle('is-terminal',next === 'terminal');
   desktop.classList.toggle('hidden', next !== 'desktop');
   terminal.classList.toggle('hidden', next !== 'terminal');
-  $('#workspace-label').textContent = next === 'desktop' ? 'Workspace' : 'Terminal';
+  $('#workspace-label').textContent = 'Desktop';
   closeAllWindows();
-  if (next === 'desktop' && welcome) openApp('about');
   if (next === 'terminal') {
     printWelcome();
     setTimeout(() => terminalInput.focus(), 0);
@@ -59,20 +62,23 @@ function chooseMode(next, welcome = false) {
 function returnHome() {
   closeLauncher();
   closeAllWindows(); mode = null;
+  workspace.classList.remove('is-terminal');
   workspace.classList.add('hidden'); chooser.classList.remove('hidden');
   $('#chooser').scrollIntoView();
 }
-document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => chooseMode(button.dataset.mode, button.dataset.mode === 'desktop')));
+document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => chooseMode(button.dataset.mode)));
 $('#topbar-home').addEventListener('click', returnHome);
 $('#mode-switch').addEventListener('click', returnHome);
-$('#terminal-desktop').addEventListener('click', () => chooseMode('desktop', true));
-function closeLauncher() {launcher.classList.add('hidden');$('#activities-button').setAttribute('aria-expanded','false');}
+$('#terminal-desktop').addEventListener('click', () => chooseMode('desktop'));
+function closeLauncher() {launcher.classList.add('hidden');desktopContext.classList.add('hidden');$('#activities-button').setAttribute('aria-expanded','false');}
 $('#activities-button').addEventListener('click', () => {launcher.classList.toggle('hidden');$('#activities-button').setAttribute('aria-expanded',String(!launcher.classList.contains('hidden')));});
-document.addEventListener('keydown', event => {if(event.key === 'Escape') closeLauncher();});
+document.addEventListener('keydown', event => {if(event.key === 'Escape') closeLauncher();if(event.ctrlKey && event.altKey && event.key.toLowerCase() === 't' && mode === 'desktop'){event.preventDefault();openApp('terminal');}});
+desktop.addEventListener('contextmenu',event=>{if(event.target.closest('button,nav')) return;event.preventDefault();launcher.classList.add('hidden');desktopContext.classList.remove('hidden');desktopContext.style.left=Math.min(event.clientX,window.innerWidth-195)+'px';desktopContext.style.top=Math.min(event.clientY-44,window.innerHeight-170)+'px';});
+$('#desktop-reset').addEventListener('click',()=>{let index=0;windows.forEach(({node})=>{node.classList.remove('is-maximized');node.style.left=`calc(50% - 300px + ${index*22}px)`;node.style.top=`calc(8% + ${index*20}px)`;index++;});closeLauncher();});
 document.addEventListener('click', event => {
-  if (!event.target.closest('#app-launcher,#activities-button')) closeLauncher();
+  if (!event.target.closest('#app-launcher,#activities-button,#desktop-context')) closeLauncher();
   const opener = event.target.closest('[data-open]');
-  if (opener) openApp(opener.dataset.open);
+  if (opener) {openApp(opener.dataset.open);closeLauncher();}
   const folder = event.target.closest('[data-folder]');
   if (folder) openApp('files',folder.dataset.folder);
 });
@@ -81,6 +87,9 @@ function focusWindow(id) {
   const entry = windows.get(id); if (!entry) return;
   if (activeWindow === 'games' && id !== 'games') windows.get('games')?.cleanup?.('pause');
   zIndex += 1; entry.node.style.zIndex = zIndex; activeWindow = id;
+  windows.forEach(({node})=>node.classList.remove('is-active'));
+  entry.node.classList.add('is-active');
+  $('#workspace-label').textContent = titles[id];
   const restoring = entry.node.classList.contains('is-minimized');
   entry.node.classList.remove('is-minimized');
   if (restoring || id === 'games') entry.resume?.();
@@ -91,8 +100,14 @@ function renderTaskbar() {
   for (const [id, entry] of windows) {
     const button = document.createElement('button');
     button.textContent = `${icons[id]} ${titles[id]}`;
-    button.setAttribute('aria-label', `Restore ${titles[id]}`);
-    button.addEventListener('click', () => focusWindow(id));
+    const minimized = entry.node.classList.contains('is-minimized');
+    button.classList.toggle('active',activeWindow === id && !minimized);
+    button.classList.toggle('minimized',minimized);
+    button.setAttribute('aria-label', `${minimized ? 'Restore' : 'Show'} ${titles[id]}`);
+    button.addEventListener('click', () => {
+      if (activeWindow === id && !entry.node.classList.contains('is-minimized')) minimizeWindow(id);
+      else focusWindow(id);
+    });
     taskbar.append(button);
   }
   document.querySelectorAll('.dock [data-open]').forEach(button => button.classList.toggle('active', windows.has(button.dataset.open)));
@@ -102,7 +117,15 @@ function closeWindow(id) {
   if (id === 'terminal') terminal.prepend(terminalShell);
   entry.cleanup?.(); entry.node.remove(); windows.delete(id);
   if (activeWindow === id) activeWindow = null;
+  if (!activeWindow) $('#workspace-label').textContent='Desktop';
   renderTaskbar();
+}
+function minimizeWindow(id) {
+  const entry = windows.get(id); if(!entry) return;
+  entry.node.classList.add('is-minimized'); entry.node.classList.remove('is-active');
+  entry.cleanup?.('pause');
+  if(activeWindow === id) activeWindow = null;
+  $('#workspace-label').textContent='Desktop';renderTaskbar();
 }
 function openApp(id, startPath) {
   if (!(id in pages)) return;
@@ -121,10 +144,11 @@ function openApp(id, startPath) {
   node.addEventListener('pointerdown', () => focusWindow(id));
   node.querySelectorAll('[data-action]').forEach(button => button.addEventListener('click', () => {
     if (button.dataset.action === 'close') closeWindow(id);
-    if (button.dataset.action === 'minimize') {node.classList.add('is-minimized'); windows.get(id)?.cleanup?.('pause');}
+    if (button.dataset.action === 'minimize') minimizeWindow(id);
     if (button.dataset.action === 'maximize') node.classList.toggle('is-maximized');
   }));
   enableDrag(node);
+  $('.app-titlebar',node).addEventListener('dblclick',event=>{if(!event.target.closest('button')) node.classList.toggle('is-maximized');});
   if (id === 'contact') setupContact(node);
   if (id === 'games') setupGames(node);
   if (id === 'files') setupFiles(node,startPath || '/');
@@ -195,6 +219,7 @@ const fileImages = {'/pictures/ravon-dev.svg':'img/ravon-dev.svg','/pictures/mat
 try {fileText['/notes.txt'] = localStorage.getItem('ravon-notes') || fileText['/notes.txt'];} catch {}
 function setupFiles(node, initialPath) {
   const list = $('.files-list',node), preview = $('.files-preview',node), breadcrumbs = $('.files-path',node);
+  const statusBar = $('.files-status',node);
   const back = $('.files-back',node), up = $('.files-up',node);
   let current = '/', trail = [], showingFile = false;
   function navigate(path, record = true) {
@@ -217,6 +242,7 @@ function setupFiles(node, initialPath) {
     });
     list.classList.toggle('hidden',showingFile); preview.classList.toggle('hidden',!showingFile);
     if (showingFile) {
+      statusBar.textContent = path;
       preview.dataset.path = path;
       preview.replaceChildren();
       const label = document.createElement('span'); label.className = 'section-label'; label.textContent = (fileImages[path] ? 'IMAGE / ' : 'TEXT DOCUMENT / ') + path.split('/').pop();
@@ -231,6 +257,7 @@ function setupFiles(node, initialPath) {
       } else {const content=document.createElement('p');content.textContent=fileText[path];preview.append(content);}
     } else {
       list.replaceChildren();
+      statusBar.textContent = `${files[path].length} items`;
       files[path].forEach(name => {
         const folder = name.endsWith('/');
         const full = (path === '/' ? '' : path) + '/' + name.replace(/\/$/,'');
@@ -246,7 +273,6 @@ function setupFiles(node, initialPath) {
         });
         list.append(button);
       });
-      const hint = document.createElement('p'); hint.className='files-hint'; hint.textContent = 'These are the same folders you can explore with ls, cd, and cat in Terminal.'; list.append(hint);
     }
   }
   back.addEventListener('click',()=>{const previous = trail.pop(); if(!previous) return; navigate(previous.file || previous.path,false);back.disabled=!trail.length;});
@@ -297,7 +323,7 @@ function runCommand(raw) {
     case 'contact': openApp('contact'); break;
     case 'games': openApp('games'); break;
     case 'snake': openApp('games'); setTimeout(() => $('[data-game=snake]', windows.get('games')?.node)?.click(), 0); break;
-    case 'desktop': case 'gui': chooseMode('desktop',true); break;
+    case 'desktop': case 'gui': chooseMode('desktop'); break;
     case 'exit': returnHome(); break;
     default: printLine(`${command}: command not found. Type help for available commands.`,'error-line');
   }
