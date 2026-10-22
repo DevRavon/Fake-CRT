@@ -1,68 +1,42 @@
-## SUPER QUICK: How to View This Page
+# Ravon.dev
 
-You can’t double-click `index.html` anymore — you need to run a tiny local server.
+Ravon's personal website offers two ways to explore: an Ubuntu-inspired desktop and an interactive terminal. Both lead to the same projects, toolkit, games, and contact form.
 
-Pick **ONE** of the options below:
+Visitors choose Desktop or Terminal at entry and can switch later. Desktop opens to a clean workspace with draggable application windows, an app launcher, Files, games, a context menu, and a windowed Terminal. The selected Terminal mode fills the viewport. Both use the original Ravon.dev logo. Files and Terminal share folder paths and a local `notes.txt`; the editor saves notes only in the visitor's browser. Try `help`, `ls`, `cd projects`, `cat ravon.dev.txt`, `neofetch`, `nano /notes.txt`, and `open /pictures/matrix.svg` in Terminal.
 
----
+The frontend uses plain HTML, CSS, and JavaScript. Vercel serves the static site and the contact function in `api/contact.js`.
 
-### Option A — Python
+## Run locally
 
-1. Open **Terminal** (macOS/Linux) or **Command Prompt** (Windows).
-2. Go into the folder where you downloaded the project. Example:
-   ```bash
-   cd ~/Downloads/RavonDev
-   ```
-   **⚠️ Don’t copy this exact path.** Change it to wherever *you* saved the folder (e.g., `Desktop`, `Documents`, etc.).
-3. Start the server:
-   ```bash
-   python -m http.server 8000
-   ```
-4. Open your browser and go to **http://localhost:8000**
-5. Press **Ctrl + C** in the terminal to stop the server when you're finished.
+```bash
+python3 -m http.server 8000
+```
 
----
+Open `http://localhost:8000`. The interface works locally; the contact form requires a Vercel function and Resend configuration.
 
-### Option B — Node.js
+## Contact delivery
 
-1. Open **Terminal** or **Command Prompt**.
-2. Go into the folder where you downloaded the project. Example:
-   ```bash
-   cd ~/Downloads/RavonDev
-   ```
-   **⚠️ Use your actual folder path.**
-3. Start the server:
-   ```bash
-   npx serve .
-   ```
-4. Open the link the command prints (usually **http://localhost:8000** or **3000**).
-5. Press **Ctrl + C** to stop the server when you're done.
+Configure these **server-side** environment variables in Vercel:
 
+| Variable | Purpose |
+| --- | --- |
+| `RESEND_API_KEY` | Resend API key |
+| `CONTACT_NOTIFICATION_FROM` | Verified sender, for example `Ravon <contact@ravon.dev>` |
+| `CONTACT_NOTIFICATION_TO` | Inbox that receives messages |
 
+The function also accepts `RESEND_FROM_EMAIL` and `CONTACT_TO_EMAIL` as alternate names. If a required setting is missing or Resend rejects the request, the form gives a truthful error and offers the public email address. No key is included in browser code, and contact details are not stored in local storage.
 
+The sending domain must be verified in Resend. Preview deployments require their own appropriately scoped environment settings to test email delivery; production settings do not automatically apply to previews.
 
-## 🙏 Credits & Inspiration
+## Checks
 
-I was able to create this effect thanks to the incredible work and open-source implementations from the creators below.
-I borrowed ideas and code from their projects, and I’m grateful I found their work instead of reinventing the wheel.
-Huge thanks to them for sharing these resources, they saved me a lot of time and helped make this project possible.
+```bash
+npm test
+node --check js/site.js
+```
 
-- https://aleclownes.com/2017/02/01/crt-display.html
-- https://github.com/staltz/hyperpunk
-- https://codepen.io/lbebber/pen/XJRdrV
-- https://github.com/HairyDuck/terminal
-- https://codepen.io/njbair/pen/ZVPomJ
-- https://codepen.io/meduzen/pen/zxbwRV 
+Review desktop, terminal, contact, and games in a browser at desktop and phone widths. A successful server response should be shown only after Resend accepts a message.
 
-## Deployment & Security (No Secrets in Repo)
+## Credits
 
-- This is a static site. There are no API keys required to run it.
-- Do not hardcode credentials or tokens anywhere in `js/` or `index.html`.
-- If you ever add backend calls, keep secrets in your platform env (e.g., Vercel Project Settings → Environment Variables) and never commit them.
-- Local-only artifacts are ignored via `.gitignore` and excluded from deployments via `.vercelignore` (e.g., `.server/`, `server.pid`, `*.log`, and `img/family/`).
-- Contact email lives in `js/config.js` as `CONTACT_EMAIL`. It’s public by design; change or remove it if you prefer not to expose an address.
-
-### Verify env on Vercel
-
-- A serverless health check is available at `/api/health`.
-- It returns JSON `{ ok: true, configured: <boolean> }` without revealing the key.
+The original CRT terminal was created with contributions from [davislcruz](https://github.com/davislcruz). The desktop interaction was informed by the [Awesome Web Desktops](https://github.com/syxanash/awesome-web-desktops) collection, especially its portfolio and file manager examples. This redesign retains the terminal idea while making the site easier to browse and contact Ravon.
